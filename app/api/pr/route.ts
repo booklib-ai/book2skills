@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         await new Promise((r) => setTimeout(r, 1000))
       }
     }
-    if (!forkReady) throw new Error("Fork not ready after 10s — try again")
+    if (!forkReady) throw new Error("fork_timeout")
 
     // 2. Get HEAD SHA of upstream main
     const { data: upstreamRef } = await octokit.git.getRef({
@@ -103,8 +103,11 @@ Generated from a book PDF using [book2skills](https://github.com/booklib-ai/book
 
     return Response.json({ url: pr.html_url, number: pr.number })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error"
-    return new Response(JSON.stringify({ error: message }), {
+    const isForkTimeout = err instanceof Error && err.message === "fork_timeout"
+    const userMessage = isForkTimeout
+      ? "GitHub is still setting up your fork — wait a few seconds and try again."
+      : "Could not open the PR. Please try again."
+    return new Response(JSON.stringify({ error: userMessage }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     })
