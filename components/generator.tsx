@@ -60,8 +60,11 @@ export function Generator({ session }: Props) {
     })
 
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      setError("Generation failed — please try again.")
+      if (res.status === 429) {
+        setError("You've used all 3 generations for today. Come back tomorrow.")
+      } else {
+        setError("Generation failed — please try again.")
+      }
       setStep("upload")
       return
     }
