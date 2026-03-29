@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
   try {
     const result = streamText({
-      model: anthropic("claude-3-5-haiku-20241022"),
+      model: anthropic("claude-haiku-4-5-20251001"),
       system: SKILL_GENERATION_SYSTEM_PROMPT,
       messages: [{ role: "user", content: buildUserPrompt(bookText) }],
       onError: (err) => {
