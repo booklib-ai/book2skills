@@ -78,6 +78,11 @@ export function Generator({ session }: Props) {
       full += decoder.decode(value, { stream: true })
       setSkillMd(full)
     }
+    if (!full.trim()) {
+      setError("Generation returned empty — check that ANTHROPIC_API_KEY is set in Vercel environment variables, then redeploy.")
+      setStep("upload")
+      return
+    }
     setStep("done")
   }
 
@@ -194,6 +199,14 @@ export function Generator({ session }: Props) {
         >
           {step === "generating" ? "Generating…" : "Generate SKILL.md"}
         </button>
+      )}
+
+      {/* Loading state before first chunk arrives */}
+      {step === "generating" && !skillMd && (
+        <div className="flex items-center gap-3 text-sm text-[var(--text-muted)] py-4">
+          <span className="inline-block w-4 h-4 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+          Generating your SKILL.md…
+        </div>
       )}
 
       {/* Step 2: Preview (streams in) */}
