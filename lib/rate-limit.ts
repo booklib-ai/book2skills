@@ -6,7 +6,10 @@ let ratelimit: Ratelimit | null = null
 function getRatelimit() {
   if (!ratelimit) {
     ratelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis({
+        url: process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL ?? "",
+        token: process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN ?? "",
+      }),
       limiter: Ratelimit.slidingWindow(3, "1 d"),
       prefix: "book2skills:generate",
     })
