@@ -33,6 +33,9 @@ export async function POST(req: Request) {
       model: anthropic("claude-3-5-haiku-20241022"),
       system: SKILL_GENERATION_SYSTEM_PROMPT,
       messages: [{ role: "user", content: buildUserPrompt(bookText) }],
+      onError: (err) => {
+        console.error("[generate] stream error:", err)
+      },
     })
 
     return result.toTextStreamResponse({
