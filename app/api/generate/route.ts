@@ -28,16 +28,21 @@ export async function POST(req: Request) {
     )
   }
 
-  const result = streamText({
-    model: anthropic("claude-haiku-4.5"),
-    system: SKILL_GENERATION_SYSTEM_PROMPT,
-    messages: [{ role: "user", content: buildUserPrompt(bookText) }],
-    headers: {
-      "X-Remaining-Generations": String(remaining),
-    },
-  })
+  try {
+    const result = streamText({
+      model: anthropic("claude-3-5-haiku-latest"),
+      system: SKILL_GENERATION_SYSTEM_PROMPT,
+      messages: [{ role: "user", content: buildUserPrompt(bookText) }],
+    })
 
-  return result.toTextStreamResponse({
-    headers: { "X-Remaining-Generations": String(remaining) },
-  })
+    return result.toTextStreamResponse({
+      headers: { "X-Remaining-Generations": String(remaining) },
+    })
+  } catch (err) {
+    console.error("[generate] streamText error:", err)
+    return new Response(
+      JSON.stringify({ error: "Generation failed — please try again." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    )
+  }
 }
