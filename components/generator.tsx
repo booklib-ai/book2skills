@@ -61,7 +61,7 @@ export function Generator({ session }: Props) {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
-      setError(data.error ?? "Generation failed. Try again.")
+      setError("Generation failed — please try again.")
       setStep("upload")
       return
     }
@@ -79,7 +79,7 @@ export function Generator({ session }: Props) {
       setSkillMd(full)
     }
     if (!full.trim()) {
-      setError("Generation returned empty — check that ANTHROPIC_API_KEY is set in Vercel environment variables, then redeploy.")
+      setError("Generation failed — the service may be temporarily unavailable. Please try again in a moment.")
       setStep("upload")
       return
     }
